@@ -1,0 +1,9 @@
+version: '3'
+services:
+  nginx:
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./static_pages:/usr/share/nginx/html
