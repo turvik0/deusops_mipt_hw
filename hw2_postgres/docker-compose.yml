@@ -1,0 +1,49 @@
+version: "2"
+services:
+  db:
+    image: mariadb:latest
+    restart: always
+    container_name: db
+    env_file:
+      .env
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
+      interval: 10s
+      timeout: 10s
+      retries: 7
+    networks:
+      - mynetwork
+  filler:
+    build:
+      context: ./filler
+      dockerfile: dockerfile
+    container_name: filler
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./data.csv:/filler/data.csv
+    networks:
+      - mynetwork
+  web:
+    build:
+      context: ./web
+      dockerfile: dockerfile
+    container_name: web
+    depends_on:
+      - filler
+      - db
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    networks:
+      - mynetwork
+networks:
+  mynetwork:
+    driver: bridge
+    
