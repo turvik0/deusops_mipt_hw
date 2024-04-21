@@ -1,0 +1,8 @@
+version: '3'
+services:
+  app:
+    build: .
+    image: myjavaapp
+    container_name: my_java_app
+    environment:
+    - MYCOOOLENV= The universe is big, arent you scared of that? Yeah me too , pass the bottle
